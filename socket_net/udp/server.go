@@ -13,13 +13,13 @@ func main() {
 		log.Fatalln(err)
 	}
 
-	fmt.Println("Servidor rodando!")
-
 	conn, err := net.ListenUDP("udp", addr)
 
 	if err != nil {
 		log.Fatalln("Erro ao iniciar servidor UDP!", err)
 	}
+
+	fmt.Println("Servidor rodando!")
 
 	defer conn.Close()
 
