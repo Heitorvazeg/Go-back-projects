@@ -1,1 +1,1 @@
-Servidor HTTP simples; uso de Middlewares; JSON encoder; Modulos Go.
+Servidor HTTP simples; Router com Mux; uso de Middlewares; JSON encoder; Modulos Go.
