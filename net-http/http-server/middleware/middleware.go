@@ -1,4 +1,4 @@
-package midd
+package mid
 
 import (
 	"fmt"

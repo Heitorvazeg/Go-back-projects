@@ -1,11 +1,11 @@
 package main
 
 import (
-	"fmt"
+	"encoding/json"
 	"net/http"
 
 	"github.com/Heitorvazeg/Go-back-projects/net-http/http-server/api"
-	midd "github.com/Heitorvazeg/Go-back-projects/net-http/http-server/middleware"
+	mid "github.com/Heitorvazeg/Go-back-projects/net-http/http-server/middleware"
 )
 
 func main() {
@@ -15,17 +15,19 @@ func main() {
 
 	srv := http.Server{
 		Addr:    a.Addr,
-		Handler: midd.MiddlewareLog(router),
+		Handler: mid.MiddlewareLog(router),
 	}
 
 	router.Handle("/", a)
 
 	router.HandleFunc("/users", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintf(w, "Users page")
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(api.Response{Message: "Users Page"})
 	})
 
-	router.Handle("/profile", midd.MiddlewareAuth(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintf(w, "Profile page protegida")
+	router.Handle("/profile", mid.MiddlewareAuth(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(api.Response{Message: "Profile page protegida"})
 	})))
 
 	srv.ListenAndServe()

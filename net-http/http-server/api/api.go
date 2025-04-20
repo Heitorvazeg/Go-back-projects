@@ -12,3 +12,7 @@ type Api struct {
 func (a *Api) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "Bem vindo!")
 }
+
+type Response struct {
+	Message string `json:"message"`
+}
