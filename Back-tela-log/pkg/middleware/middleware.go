@@ -3,17 +3,14 @@ package mid
 import (
 	"fmt"
 	"net/http"
+	"time"
 )
-
-func MidAuth(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		next.ServeHTTP(w, r)
-	})
-}
 
 func MidLog(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		fmt.Printf("[%s] %s\n", r.Method, r.URL)
+		start := time.Now()
+
+		fmt.Printf("%s|[%s] %s\n", &start, r.Method, r.URL)
 		next.ServeHTTP(w, r)
 	})
 }
