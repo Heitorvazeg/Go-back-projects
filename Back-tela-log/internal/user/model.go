@@ -6,10 +6,9 @@ import (
 )
 
 type User struct {
-	Id    int
-	Nome  string
-	Email string
-	Senha string
+	Nome  string `json:"nome"`
+	Email string `json:"email"`
+	Senha string `json:"senha"`
 }
 
 type Api struct {

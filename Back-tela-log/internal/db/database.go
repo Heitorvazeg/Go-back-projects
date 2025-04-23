@@ -11,7 +11,7 @@ import (
 )
 
 func Connect() *sql.DB {
-	err := godotenv.Load()
+	err := godotenv.Load("C:/Users/heito/OneDrive/Documentos/Programas/Go-back-projects/Back-tela-log/config/login.env")
 
 	if err != nil {
 		log.Fatal("Erro ao carregar .env", err)

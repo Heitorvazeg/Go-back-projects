@@ -24,7 +24,7 @@ func (r *Repository) FindByEmail(u *User) (*User, error) {
 
 	var user User
 
-	err := row.Scan(&user.Id, &user.Nome, &user.Email, &user.Senha)
+	err := row.Scan(&user.Nome, &user.Email, &user.Senha)
 
 	if err != nil {
 		if err == sql.ErrNoRows {

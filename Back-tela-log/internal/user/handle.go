@@ -21,19 +21,18 @@ func (h *Handler) HandleCadastro(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Método não permitido", http.StatusMethodNotAllowed)
 		return
 	}
-	var u User
-	err := json.NewDecoder(r.Body).Decode(&u)
 
-	if err != nil {
-		http.Error(w, "Erro ao ler JSON"+err.Error(), http.StatusBadRequest)
+	var u User
+	if err := json.NewDecoder(r.Body).Decode(&u); err != nil {
+		http.Error(w, "Erro ao ler JSON "+err.Error(), http.StatusBadRequest)
 		return
 	}
+
 	nome, email, senha := u.Nome, u.Email, u.Senha
 
-	err = val.Validate(nome, email, senha)
-
-	if err != nil {
+	if err := val.Validate(nome, email, senha); err != nil {
 		http.Error(w, "Erro: "+err.Error(), http.StatusBadRequest)
+		return
 	}
 
 	yes, err := h.Service.EmailExists(&u)
@@ -48,9 +47,7 @@ func (h *Handler) HandleCadastro(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = h.Service.Repo.CreateUsers(&u)
-
-	if err != nil {
+	if err := h.Service.Repo.CreateUsers(&u); err != nil {
 		http.Error(w, "Erro ao criar usuário"+err.Error(), http.StatusInternalServerError)
 		return
 	}

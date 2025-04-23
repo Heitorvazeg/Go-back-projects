@@ -3,24 +3,19 @@ package val
 import (
 	"fmt"
 	"regexp"
+	"strings"
 )
 
-func Validate(email, senha, nome string) error {
-	err := validateRequiredFields(nome, email, senha)
-
-	if err != nil {
-		return fmt.Errorf("os campos não podem estar vazios")
+func Validate(nome, email, senha string) error {
+	if err := validateRequiredFields(nome, email, senha); err != nil {
+		return fmt.Errorf("campo(s) vazio(s)")
 	}
 
-	boolean := validateEmailFormat(email)
-
-	if !boolean {
+	if !validateEmailFormat(email) {
 		return fmt.Errorf("email inválido")
 	}
 
-	boolean = validatePassword(senha)
-
-	if !boolean {
+	if !validatePassword(senha) {
 		return fmt.Errorf("senha muito curta")
 	}
 
@@ -36,9 +31,9 @@ func validateRequiredFields(nome, email, senha string) error {
 
 func validateEmailFormat(email string) bool {
 	re := regexp.MustCompile(`^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$`)
-	return re.MatchString(email)
+	return re.MatchString(strings.TrimSpace(email))
 }
 
 func validatePassword(senha string) bool {
-	return len(senha) >= 7
+	return len(strings.TrimSpace(senha)) >= 7
 }

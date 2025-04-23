@@ -5,6 +5,7 @@ import (
 
 	"github.com/Heitorvazeg/Go-back-projects/Back-tela-log/internal/db"
 	"github.com/Heitorvazeg/Go-back-projects/Back-tela-log/internal/user"
+	"github.com/Heitorvazeg/Go-back-projects/Back-tela-log/pkg/middleware"
 )
 
 func main() {
