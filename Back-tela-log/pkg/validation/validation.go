@@ -16,7 +16,7 @@ func Validate(nome, email, senha string) error {
 	}
 
 	if !validatePassword(senha) {
-		return fmt.Errorf("senha muito curta")
+		return fmt.Errorf("senha fraca")
 	}
 
 	return nil

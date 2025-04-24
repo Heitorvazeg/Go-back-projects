@@ -1,0 +1,1 @@
+Oque falta: Middlewares de autenticação; token JTW; criptografia de senha; Handler esqueciSenha.

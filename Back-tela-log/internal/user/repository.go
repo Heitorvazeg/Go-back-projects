@@ -1,6 +1,8 @@
 package user
 
-import "database/sql"
+import (
+	"database/sql"
+)
 
 type Repository struct {
 	DB *sql.DB
@@ -18,7 +20,7 @@ func (r *Repository) CreateUsers(u *User) error {
 }
 
 func (r *Repository) FindByEmail(u *User) (*User, error) {
-	query := "SELECT id, nome, email, senha FROM usuarios WHERE email = ?"
+	query := "SELECT nome, email, senha FROM usuarios WHERE email = ?"
 
 	row := r.DB.QueryRow(query, u.Email)
 
@@ -33,4 +35,10 @@ func (r *Repository) FindByEmail(u *User) (*User, error) {
 		return nil, err
 	}
 	return &user, nil
+}
+
+func (r *Repository) CreateLog(lg *Log) error {
+	query := "INSERT INTO log (time, method, url, descricao) VALUES (?, ?, ?, ?)"
+	_, err := r.DB.Exec(query, lg.Time, lg.Method, lg.Url, lg.Descricao)
+	return err
 }
