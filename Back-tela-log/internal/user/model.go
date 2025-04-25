@@ -1,11 +1,12 @@
 package user
 
 import (
+	"bytes"
 	"database/sql"
-	"fmt"
 	"log"
 	"net/http"
 	"net/url"
+	"strconv"
 	"time"
 )
 
@@ -16,31 +17,52 @@ type User struct {
 }
 
 type Log struct {
-	Time      time.Time
-	Method    string
-	Url       string
-	Descricao string
+	Time     time.Time
+	Method   string
+	Url      string
+	Status   string
+	Response string
 }
 
-func NewLog(h *Handler, time time.Time, method string, url *url.URL, descricao http.Header) {
-	var headerString string
-
-	for key, values := range descricao {
-		for _, value := range values {
-			headerString += fmt.Sprintf("%s: %s\n", key, value)
-		}
-	}
-
+func NewLog(h *Handler, lrw *loggingResponseWriter, time time.Time,
+	method string, url *url.URL) {
+	status := strconv.Itoa(lrw.StatusCode)
 	l := &Log{
-		Time:      time,
-		Method:    method,
-		Url:       url.String(),
-		Descricao: headerString,
+		Time:     time,
+		Method:   method,
+		Url:      url.String(),
+		Status:   status,
+		Response: lrw.Body.String(),
 	}
 
 	if err := h.Service.Repo.CreateLog(l); err != nil {
 		log.Println("Erro ao criar log: " + err.Error())
 	}
+}
+
+type loggingResponseWriter struct {
+	http.ResponseWriter
+	StatusCode int
+	Body       bytes.Buffer
+}
+
+func NewLGRW(w http.ResponseWriter) *loggingResponseWriter {
+	lrw := &loggingResponseWriter{
+		ResponseWriter: w,
+		StatusCode:     http.StatusOK,
+	}
+
+	return lrw
+}
+
+func (lrw *loggingResponseWriter) WriteHeader(code int) {
+	lrw.StatusCode = code
+	lrw.ResponseWriter.WriteHeader(code)
+}
+
+func (lrw *loggingResponseWriter) Write(b []byte) (int, error) {
+	lrw.Body.Write(b)
+	return lrw.ResponseWriter.Write(b)
 }
 
 type Api struct {

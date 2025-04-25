@@ -36,27 +36,36 @@ func (h *Handler) HandleCadastro(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	yes, err := h.Service.EmailExists(&u)
+	ok, err := h.Service.EmailExists(&u)
 
 	if err != nil {
 		http.Error(w, "Erro ao validar email!", http.StatusBadRequest)
 		return
 	}
 
-	if yes {
+	if ok {
 		http.Error(w, "Email já cadastrado!", http.StatusConflict)
 		return
 	}
 
-	if err := h.Service.Repo.CreateUsers(&u); err != nil {
+	senhaSec, err := h.Service.SenhaCrypt(&u)
+
+	if err != nil {
+		http.Error(w, "Erro ao criptografar senha! "+err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	if err := h.Service.Repo.CreateUsers(&u, senhaSec); err != nil {
 		http.Error(w, "Erro ao criar usuário"+err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	w.WriteHeader(http.StatusCreated)
-	w.Write([]byte("Usuário cadastrado com sucesso!"))
+	lrw := NewLGRW(w)
 
-	NewLog(h, time.Now(), r.Method, r.URL, w.Header())
+	lrw.WriteHeader(http.StatusAccepted)
+	lrw.Write([]byte("Email cadastrado com sucesso!"))
+
+	NewLog(h, lrw, time.Now(), r.Method, r.URL)
 }
 
 func (h *Handler) HandleLogin(w http.ResponseWriter, r *http.Request) {
@@ -78,21 +87,28 @@ func (h *Handler) HandleLogin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	lrw := NewLGRW(w)
+
 	if user == nil {
-		w.WriteHeader(http.StatusConflict)
-		w.Write([]byte("Usuário não existe!"))
+		lrw.WriteHeader(http.StatusConflict)
+		lrw.Write([]byte("Usuário não existe!"))
+		NewLog(h, lrw, time.Now(), r.Method, r.URL)
 		return
 	}
 
-	if u.Email == user.Email && u.Senha == user.Senha {
-		w.WriteHeader(http.StatusAccepted)
-		w.Write([]byte("Login realizado com sucesso!"))
+	ok, err := h.Service.CorrectPassword(user.Senha, u.Senha)
 
-	} else {
-		w.WriteHeader(http.StatusUnauthorized)
-		w.Write([]byte("Email ou senha incorretas!"))
+	if err != nil {
+		http.Error(lrw, "Senha incorreta!", http.StatusUnauthorized)
+		NewLog(h, lrw, time.Now(), r.Method, r.URL)
+		return
+	}
+
+	if u.Email == user.Email && ok {
+		lrw.WriteHeader(http.StatusAccepted)
+		lrw.Write([]byte("Login realizado com sucesso!"))
 
 	}
 
-	NewLog(h, time.Now(), r.Method, r.URL, w.Header())
+	NewLog(h, lrw, time.Now(), r.Method, r.URL)
 }

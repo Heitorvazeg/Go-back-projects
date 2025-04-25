@@ -13,9 +13,10 @@ func NewRepository(db *sql.DB) *Repository {
 	return &r
 }
 
-func (r *Repository) CreateUsers(u *User) error {
+func (r *Repository) CreateUsers(u *User, senha string) error {
 	query := "INSERT INTO usuarios (nome, email, senha) VALUES (?, ?, ?)"
-	_, err := r.DB.Exec(query, u.Nome, u.Email, u.Senha)
+
+	_, err := r.DB.Exec(query, u.Nome, u.Email, senha)
 	return err
 }
 
@@ -38,7 +39,7 @@ func (r *Repository) FindByEmail(u *User) (*User, error) {
 }
 
 func (r *Repository) CreateLog(lg *Log) error {
-	query := "INSERT INTO log (time, method, url, descricao) VALUES (?, ?, ?, ?)"
-	_, err := r.DB.Exec(query, lg.Time, lg.Method, lg.Url, lg.Descricao)
+	query := "INSERT INTO log (time, method, url, status, descricao) VALUES (?, ?, ?, ?, ?)"
+	_, err := r.DB.Exec(query, lg.Time, lg.Method, lg.Url, lg.Status, lg.Response)
 	return err
 }
