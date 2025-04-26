@@ -1,6 +1,7 @@
 package main
 
 import (
+	"log"
 	"net/http"
 
 	"github.com/Heitorvazeg/Go-back-projects/Back-tela-log/internal/db"
@@ -19,5 +20,7 @@ func main() {
 		Handler: mid.CORS(mid.MidLog(a.Rout)),
 	}
 
-	srv.ListenAndServe()
+	if err := srv.ListenAndServe(); err != nil {
+		log.Fatalf("Erro ao iniciar servidor: %v", err)
+	}
 }
