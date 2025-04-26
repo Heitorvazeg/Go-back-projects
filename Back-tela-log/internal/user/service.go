@@ -2,9 +2,11 @@ package user
 
 import (
 	"fmt"
+	"os"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
+	"github.com/joho/godotenv"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -60,7 +62,12 @@ func (s *Service) newToken(u *User) (string, error) {
 		}
 		return "", nil
 	}
-	jwtkey := []byte("chave_secreta")
+
+	if err = godotenv.Load("C:/Users/heito/OneDrive/Documentos/Programas/Go-back-projects/Back-tela-log/config/login.env"); err != nil {
+		return "", err
+	}
+
+	jwtkey := os.Getenv("JWT_KEY")
 
 	claim := jwt.MapClaims{
 		"user_id": id,
@@ -68,5 +75,5 @@ func (s *Service) newToken(u *User) (string, error) {
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claim)
-	return token.SignedString(jwtkey)
+	return token.SignedString([]byte(jwtkey))
 }
