@@ -117,7 +117,6 @@ func (h *Handler) HandleLogin(w http.ResponseWriter, r *http.Request) {
 		}); err != nil {
 			http.Error(w, "Erro ao codificar JSON token! "+err.Error(), http.StatusBadRequest)
 		}
-		return
 	}
 
 	NewLog(h, lrw, time.Now(), r.Method, r.URL)
