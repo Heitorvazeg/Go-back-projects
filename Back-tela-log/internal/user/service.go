@@ -2,7 +2,9 @@ package user
 
 import (
 	"fmt"
+	"time"
 
+	"github.com/golang-jwt/jwt/v5"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -47,4 +49,24 @@ func (s *Service) CorrectPassword(senhaCrypt, senhaDescrypt string) (bool, error
 		return false, err
 	}
 	return true, nil
+}
+
+func (s *Service) newToken(u *User) (string, error) {
+	id, err := s.Repo.findID(u)
+
+	if id < 0 {
+		if err != nil {
+			return "", err
+		}
+		return "", nil
+	}
+	jwtkey := []byte("chave_secreta")
+
+	claim := jwt.MapClaims{
+		"user_id": id,
+		"exp":     int(time.Now().Add(time.Hour * 24).Unix()),
+	}
+
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claim)
+	return token.SignedString(jwtkey)
 }

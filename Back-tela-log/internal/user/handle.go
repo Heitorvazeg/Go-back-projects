@@ -105,9 +105,19 @@ func (h *Handler) HandleLogin(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if u.Email == user.Email && ok {
-		lrw.WriteHeader(http.StatusAccepted)
-		lrw.Write([]byte("Login realizado com sucesso!"))
+		token, err := h.Service.newToken(&u)
 
+		if err != nil {
+			http.Error(w, "Erro ao gerar token! "+err.Error(), http.StatusBadRequest)
+		}
+
+		if err := json.NewEncoder(lrw).Encode(map[string]string{
+			"token":    token,
+			"mensagem": "Login realizado com sucesso!",
+		}); err != nil {
+			http.Error(w, "Erro ao codificar JSON token! "+err.Error(), http.StatusBadRequest)
+		}
+		return
 	}
 
 	NewLog(h, lrw, time.Now(), r.Method, r.URL)

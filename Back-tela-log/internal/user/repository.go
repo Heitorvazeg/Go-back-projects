@@ -38,6 +38,23 @@ func (r *Repository) FindByEmail(u *User) (*User, error) {
 	return &user, nil
 }
 
+func (r *Repository) findID(u *User) (int, error) {
+	query := "SELECT id FROM usuarios WHERE email = ?"
+
+	row := r.DB.QueryRow(query, u.Email)
+
+	var id int
+	err := row.Scan(&id)
+
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return -1, nil
+		}
+		return -1, err
+	}
+	return id, nil
+}
+
 func (r *Repository) CreateLog(lg *Log) error {
 	query := "INSERT INTO log (time, method, url, status, descricao) VALUES (?, ?, ?, ?, ?)"
 	_, err := r.DB.Exec(query, lg.Time, lg.Method, lg.Url, lg.Status, lg.Response)

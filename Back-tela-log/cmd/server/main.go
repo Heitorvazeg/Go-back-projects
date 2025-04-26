@@ -5,7 +5,7 @@ import (
 
 	"github.com/Heitorvazeg/Go-back-projects/Back-tela-log/internal/db"
 	"github.com/Heitorvazeg/Go-back-projects/Back-tela-log/internal/user"
-	"github.com/Heitorvazeg/Go-back-projects/Back-tela-log/pkg/middleware"
+	mid "github.com/Heitorvazeg/Go-back-projects/Back-tela-log/pkg/middleware"
 )
 
 func main() {
@@ -16,7 +16,7 @@ func main() {
 
 	srv := http.Server{
 		Addr:    a.Addr,
-		Handler: mid.MidLog(a.Rout),
+		Handler: mid.CORS(mid.MidLog(a.Rout)),
 	}
 
 	srv.ListenAndServe()
