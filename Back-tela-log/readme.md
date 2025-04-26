@@ -1,1 +1,1 @@
-Projeto Back-End integrado ao projeto Front-End Tela log, de Web Projects; API REST de cadastro de usúarios e sistema de login; Banco de dados MySQL para armazenamento de usuários e de eventos; lógicas de serviço para verificação, validação e autenticação.
+Projeto Back-End integrado ao projeto Front-End Tela log, de Web Projects; API REST de cadastro de usúarios e sistema de login; Banco de dados MySQL para armazenamento de usuários e de eventos; lógicas de serviço para verificação, validação e autenticação; token JWT para acesso válido; middleware para permissão CORS.
