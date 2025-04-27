@@ -109,6 +109,8 @@ func (h *Handler) HandleLogin(w http.ResponseWriter, r *http.Request) {
 
 		if err != nil {
 			http.Error(w, "Erro ao gerar token! "+err.Error(), http.StatusBadRequest)
+			NewLog(h, lrw, time.Now(), r.Method, r.URL)
+			return
 		}
 
 		if err := json.NewEncoder(lrw).Encode(map[string]string{
