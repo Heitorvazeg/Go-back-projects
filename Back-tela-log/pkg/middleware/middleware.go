@@ -15,7 +15,12 @@ func MidLog(next http.Handler) http.Handler {
 
 		next.ServeHTTP(lrw, r)
 
-		fmt.Printf("%s|[%s] %s| %d: %s\n", start, r.Method, r.URL, lrw.StatusCode, lrw.Body.String())
+		if lrw.StatusCode >= 200 && lrw.StatusCode <= 204 {
+			fmt.Printf("%s|[%s] %s| %d\n", start, r.Method, r.URL, lrw.StatusCode)
+
+		} else {
+			fmt.Printf("%s|[%s] %s| %d: %s\n", start, r.Method, r.URL, lrw.StatusCode, lrw.Body.String())
+		}
 	})
 }
 
