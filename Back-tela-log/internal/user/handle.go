@@ -112,12 +112,12 @@ func (h *Handler) HandleLogin(w http.ResponseWriter, r *http.Request) {
 		}
 
 		if err := json.NewEncoder(lrw).Encode(map[string]string{
-			"token": token,
+			"token":   token,
+			"message": "login realizado com sucesso!",
 		}); err != nil {
 			http.Error(w, "Erro ao codificar JSON token! "+err.Error(), http.StatusBadRequest)
 		}
 		lrw.ResponseWriter.WriteHeader(http.StatusAccepted)
-		lrw.ResponseWriter.Write([]byte("Login realizado com sucesso!"))
 	}
 
 	NewLog(h, lrw, time.Now(), r.Method, r.URL)
